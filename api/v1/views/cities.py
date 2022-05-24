@@ -80,13 +80,13 @@ def update_city(city_id, request):
                  defaults={'state_id': None}, strict_slashes=False)
 @app_views.route('/cities/<city_id>',
                  methods=['GET', 'DELETE', 'PUT'])
-def cities(id):
+def cities(state_or_city_id):
     """ Switch to select function """
     if (request.method == "GET"):
-        return get_all_cities(state_id)
+        return get_all_cities(state_or_city_id)
     elif request.method == "DELETE":
-        return delete_city(city_id)
+        return delete_city(state_or_city_id)
     elif request.method == "POST":
         return create_city(request), 201
     elif request.method == 'PUT':
-        return update_city(city_id, request), 200
+        return update_city(state_or_city_id, request), 200
