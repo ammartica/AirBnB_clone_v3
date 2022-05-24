@@ -12,7 +12,7 @@ from api.v1.app import *
                  methods=['GET'], strict_slashes=False)
 def all_places(city_id):
     """method retieves all places"""
-    city = storage.get('City', city_id)
+    city = storage.get(City, city_id)
     if city is None:
         abort(404)
     places = []
@@ -24,7 +24,7 @@ def all_places(city_id):
 @app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
 def one_place(place_id):
     """method that retrieves a place by id"""
-    place = storage.get('Place', place_id)
+    place = storage.get(Place, place_id)
     if place is not None:
         return jsonify(my_place.to_dict())
     else:
@@ -35,7 +35,7 @@ def one_place(place_id):
                  strict_slashes=False)
 def delete_place(place_id):
     """method that deletes a place by id"""
-    place = storage.get('Place', place_id)
+    place = storage.get(Place, place_id)
     if place is None:
         abort(404)
     storage.delete(place)
@@ -58,7 +58,7 @@ def create_place(city_id):
     if city is None:
         abort(404)
 
-    user = storage.get('User', request.json['user_id'])
+    user = storage.get(User, request.json['user_id'])
     if user is None:
         abort(404)
 
@@ -72,7 +72,7 @@ def create_place(city_id):
 @app_views.route('/places/<place_id>', methods=['PUT'], strict_slashes=False)
 def update_place(place_id):
     """method to update a place by id"""
-    place = storage.get('Place', place_id)
+    place = storage.get(Place, place_id)
     if place is None:
         abort(404)
     request = request.get_json()
