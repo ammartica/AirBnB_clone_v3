@@ -76,9 +76,9 @@ def update_city(city_id, request):
         return jsonify(city.to_dict())
 
 
-@app_views.route('/states/<state_id>/cities', methods=['GET', 'POST'],
+@app_views.route('/states/<state_or_city_id>/cities', methods=['GET', 'POST'],
                  strict_slashes=False)
-@app_views.route('/cities/<city_id>',
+@app_views.route('/cities/<state_or_city_id>',
                  methods=['GET', 'DELETE', 'PUT'])
 def cities(state_or_city_id):
     """ Switch to select function """
