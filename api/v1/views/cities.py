@@ -73,7 +73,7 @@ def create_city(state_or_city_id):
         abort(404)
     city = City(name=name_city, state_id=state.id)
     city.save()
-    return jsonify(city.to_dict())
+    return jsonify(city.to_dict(), 201)
 
 
 def update_city(city_id, request):
@@ -99,7 +99,5 @@ def cities(state_or_city_id):
         return get_all_cities(state_or_city_id)
     elif request.method == "DELETE":
         return delete_city(state_or_city_id)
-    elif request.method == "POST":
-        return create_city(request), 201
     elif request.method == 'PUT':
         return update_city(state_or_city_id, request), 200
