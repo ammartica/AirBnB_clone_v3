@@ -66,7 +66,6 @@ class FileStorage:
                 del self.__objects[key]
 
     def get(self, cls, id):
-        """method to retrieve an object based on its class and id"""
         all_items = self.all(cls)
         list_items = all_items.values()
         for item in list_items:
@@ -75,7 +74,6 @@ class FileStorage:
         return None
 
     def count(self, cls=None):
-        """method to count total number of objects in storage"""
         if cls is not None:
             cls_items = self.all(cls)
             return len(cls_items)
