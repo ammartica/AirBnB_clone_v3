@@ -37,7 +37,7 @@ def get_all_places(city_id):
     places_all = []
     for place in city.places():
         places_all.append(place.to_dict())
-    return jsonify(places_all), 200
+    return jsonify(places_all)
 
 
 @app_views.route('/places/<place_id>', methods=['GET'],
@@ -47,7 +47,7 @@ def get_a_place(place_id):
     place = storage.get(Place, place_id)
     if place is None:
         abort(404)
-    return jsonify(place.to_dict()), 200
+    return jsonify(place.to_dict())
 
 
 @app_views.route('/places/<place_id>', methods=['DELETE'],
@@ -58,7 +58,7 @@ def delete_place(place_id):
     storage.delete(place)
     storage.save()
     response = {}
-    return jsonify(response)
+    return jsonify(response), 200
 
 
 @app_views.route('/cities/<city_id>/places', methods=['POST'],
@@ -70,25 +70,20 @@ def create_place(city_id):
     request_json = request.get_json()
     if request_json is None:
         abort(400, 'Not a JSON')
-    try:
-        name_place = request_json['name']
-    except Exception:
-        abort(400, "Missing name")
-    try:
-        user_id = request_json['user_id']
-    except Exception:
-        abort(400, "Missing user_id")
-
+    if 'user_id' not in request_json:
+        abort(400, 'Missing user_id')
+    if 'name' not in request_json:
+        abort(400, 'Missing name')
     place = storage.get(City, city_id)
     if place is None:
         abort(404)
 
-    user = storage.get(User, user_id)
+    user = storage.get(User, request.json['user_id'])
     if user is None:
         abort(404)
 
-    new_place = Place(name=name_place, city_id=city_id,
-                      user_id=user_id)
+    new_place = Place(name=request.json['name'],
+                      city_id=city_id, user_id=request.json['user_id'])
     storage.new(new_place)
     storage.save()
     return jsonify(new_place.to_dict()), 201
@@ -97,7 +92,10 @@ def create_place(city_id):
 @app_views.route('/places/<place_id>', methods=['PUT'], strict_slashes=False)
 def update_place(place):
     """ update place """
-    place = validate_place(place_id)
+    place = storage.get(Place, place_id)
+    if place is None:
+        abort(404)
+
     request_json = request.get_json()
     if request_json is None:
         abort(400, 'Not a JSON')
