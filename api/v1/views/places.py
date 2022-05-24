@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """ Handles all default RESTFul API """
-from flask import request, abort, jsonify
+from flask import request, abort, jsonify, Response
 from models import storage
 from models.state import State
 from models.city import City
@@ -52,7 +52,7 @@ def create_place(city_id):
 
     request = request.get_json()
     if not request:
-        abort(400, 'Not a JSON')
+        return Response("Not a JSON", 400)
     if 'user_id' not in data:
         abort(400, 'Missing user_id')
     if 'name' not in data:
