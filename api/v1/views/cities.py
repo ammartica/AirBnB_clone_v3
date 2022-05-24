@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 """ Handles all default RESTFul API """
 from flask import request, abort, jsonify
-from api.v1.app import *
-from api.v1.views import app_views
 from models import storage
 from models.state import State
 from models.city import City
+from api.v1.views import app_views
+from api.v1.app import *
 
 
 def validate_state(id):
