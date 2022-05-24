@@ -8,20 +8,20 @@ from api.v1.views import app_views
 from api.v1.app import *
 
 
-def validate_state(id):
+def validate_state(state_id):
     """ validate if query has id to reference """
     try:
-        valid = storage.get(State, id)
+        valid = storage.get(State, state_id)
         valid.to_dict()
     except Exception:
         abort(404)
     return valid
 
 
-def validate_city(id):
+def validate_city(city_id):
     """ validate if city obj exists """
     try:
-        valid = storage.get(City, id)
+        valid = storage.get(City, city_id)
         valid.to_dict()
     except Exception:
         abort(404)
