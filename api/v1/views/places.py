@@ -12,7 +12,7 @@ from api.v1.app import *
                  methods=['GET'], strict_slashes=False)
 def all_places(city_id):
     """method retieves all places"""
-    city = storage.get(i'City', city_id)
+    city = storage.get('City', city_id)
     if city is None:
         abort(404)
     places = []
