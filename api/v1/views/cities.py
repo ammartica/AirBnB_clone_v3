@@ -32,11 +32,20 @@ def get_all_cities(state_id):
     """ get all cities """
     if (state_id is not None):
         state = validate_state(state_id)
-    cities = storage.all(City)
+    cities = storage.all('City')
     cities_all = []
     for city in cities.values():
         cities_all.append(city.to_dict())
     return jsonify(cities_all)
+
+
+@app_views.route('/cities/<city_id>', methods=['GET'])
+def get_a_city(city_id):
+    """gets one specified city"""
+    city = storage.get(City, city_id)
+    if city is None:
+        abort(404)
+    return jsonify(city.to_dict())
 
 
 def delete_city(city_id):
@@ -79,7 +88,7 @@ def update_city(city_id, request):
 @app_views.route('/states/<state_or_city_id>/cities', methods=['GET', 'POST'],
                  strict_slashes=False)
 @app_views.route('/cities/<state_or_city_id>',
-                 methods=['GET', 'DELETE', 'PUT'])
+                 methods=['DELETE', 'PUT'])
 def cities(state_or_city_id):
     """ Switch to select function """
     if (request.method == "GET"):
