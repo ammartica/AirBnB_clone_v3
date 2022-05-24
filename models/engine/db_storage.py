@@ -71,6 +71,24 @@ class DBStorage:
         Session = scoped_session(sess_factory)
         self.__session = Session
 
+    def get(self, cls, id):
+        """method to retrieve one object based on class and its id"""
+        all_items = self.all(cls)
+        list_items = all_items.values()
+        for item in list_items:
+            if item.id == id:
+                return item
+        return None
+
+    def count(self, cls=None):
+        """method to count number of objects in storage"""
+        if cls is not None:
+            cls_items = self.all(cls)
+            return len(cls_items)
+        else:
+            all_items = self.all()
+            return len(all_items)
+
     def close(self):
         """call remove() method on the private session attribute"""
         self.__session.remove()
