@@ -79,11 +79,10 @@ def update_review(review_id):
     if not request.json:
         abort(400, 'Not a JSON')
     req = request.get_json()
-    for key in req:
-        if key == 'id' or key == 'user_id' or\
-           key == 'place_id' or key == 'created_at' or key == 'updated_at':
-            pass
-        else:
-            setattr(review, key, req[key])
-    storage.save()
+    req['id'] = review.id
+    req['user_id'] = review.user_id
+    req['place_id'] = review.place_id
+    req['created_at'] = review.created_at
+    review.__init__(**req)
+    review.save()
     return jsonify(review.to_dict()), 200
