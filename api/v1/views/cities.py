@@ -70,9 +70,9 @@ def update_city(city_id):
     if not request.json:
         abort(400, 'Not a JSON')
     req = request.get_json()
-    req['id'] = a_city.id
-    req['created_at'] = a_city.created_at
-    req['state_id'] = a_city.state_id
+    req['id'] = city.id
+    req['created_at'] = city.created_at
+    req['state_id'] = city.state_id
     city.__init__(**req)
     city.save()
     return (jsonify(city.to_dict()), 200)
