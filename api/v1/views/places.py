@@ -11,7 +11,7 @@ from api.v1.views import app_views
 
 @app_views.route('/cities/<city_id>/places',
                  methods=['GET'], strict_slashes=False)
-def get_all_places(city_id):
+def all_places(city_id):
     """method that retrieves a list of all places"""
     city = storage.get('City', city_id)
     if city is None:
@@ -48,7 +48,7 @@ def delete_place(place_id):
 @app_views.route('/cities/<city_id>/places',
                  methods=['POST'], strict_slashes=False)
 def create_place(city_id):
-    """method to create a new place"""
+    """method to post a new place"""
     place = request.get_json()
     if not place:
         abort(400, 'Not a JSON')
@@ -84,6 +84,6 @@ def update_place(place_id):
     req['user_id'] = place.user_id
     req['city_id'] = place.city_id
     req['created_at'] = place.created_at
-    place.__init__(**data)
+    place.__init__(**req)
     place.save()
     return jsonify(place.to_dict()), 200
