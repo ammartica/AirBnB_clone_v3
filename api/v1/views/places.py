@@ -27,9 +27,10 @@ def get_all_places(city_id):
 def get_one_place(place_id):
     """method that retrieves a place by id"""
     place = storage.get('Place', place_id)
-    if place is None:
+    if place is not None:
+        return jsonify(place.to_dict())
+    else:
         abort(404)
-    return jsonify(place.to_dict())
 
 
 @app_views.route('/places/<place_id>', methods=['DELETE'],
