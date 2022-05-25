@@ -9,35 +9,36 @@ from models.review import Review
 from api.v1.views import app_views
 
 
-@app_views.route('/places/<place_id>/reviews', methods=['GET'],
-                 strict_slashes=False)
-def all_reviews(place_id=None):
-    """method retieves all reviews"""
-    place = storage.get(Place, place_id)
-    if not place:
+@app_views.route('/places/<place_id>/reviews',
+                 methods=['GET'], strict_slashes=False)
+def all_reviews(place_id):
+    """method that retrieves a list of all reviews"""
+    place = storage.get('Place', place_id)
+    if place is None:
         abort(404)
-    all_reviews = place.reviews
-    reviews = []
-    for review in all_reviews:
-        reviews.append(review.to_dict())
-    return jsonify(reviews), 200
+    reviews = place.reviews
+    reviews_list = []
+    for review in reviews:
+        reviews_list.append(review.to_dict())
+    return jsonify(reviews_list)
 
 
 @app_views.route('/reviews/<review_id>', methods=['GET'],
                  strict_slashes=False)
-def one_review(review_id=None):
+def get_one_review(review_id):
     """method that retrieves a review by id"""
-    review = storage.get(Review, review_id)
-    if review is None:
+    review = storage.get('Review', review_id)
+    if review is not None:
+        return jsonify(review.to_dict())
+    else:
         abort(404)
-    return jsonify(review.to_dict()), 200
 
 
 @app_views.route('/reviews/<review_id>', methods=['DELETE'],
                  strict_slashes=False)
-def delete_review(review_id=None):
+def delete_review(review_id):
     """method that deletes a review by id"""
-    review = storage.get(Review, review_id)
+    review = storage.get('Review', review_id)
     if review is None:
         abort(404)
     storage.delete(review)
@@ -45,43 +46,44 @@ def delete_review(review_id=None):
     return jsonify({}), 200
 
 
-@app_views.route('/places/<place_id>/reviews', methods=['POST'],
-                 strict_slashes=False)
-def create_review(place_id=None):
+@app_views.route('/places/<place_id>/reviews',
+                 methods=['POST'], strict_slashes=False)
+def create_review(place_id):
     """method to create a new review"""
-    place = storage.get(Place, place_id)
-    if not place:
-        abort(404)
-    request = request.get_json()
-    if not request:
+    review = request.get_json()
+    if not review:
         abort(400, 'Not a JSON')
-    if 'user_id' not in data:
+    if 'user_id' not in review:
         abort(400, 'Missing user_id')
-    if 'text' not in data:
+    if 'text' not in review:
         abort(400, 'Missing text')
-    user = storage.get(User, request.get('user_id'))
-    if not user:
+    user = storage.get('User', request.json['user_id'])
+    if user is None:
         abort(404)
-    review = Review(place_id=place.id, user_id=user.id,
-                    text=request.get('text'))
-    review.save()
-    return jsonify(review.to_dict()), 201
+    place = storage.get('Place', place_id)
+    if place is None:
+        abort(404)
+    new_review = Review(user_id=request.json['user_id'],
+                        text=request.json['text'], place_id=place_id)
+    storage.new(new_review)
+    storage.save()
+    return jsonify(new_review.to_dict()), 201
 
 
-@app_views.route('/reviews/<review_id>', methods=['PUT'],
-                 strict_slashes=False)
-def update_place(place_id=None):
+@app_views.route('/reviews/<review_id>', methods=['PUT'])
+def update_review(review_id):
     """method to update a review by id"""
-    review = storage.get(Review, review_id)
+    review = storage.get('Review', review_id)
     if review is None:
         abort(404)
-    request = request.get_json()
-    if not request:
+    if not request.json:
         abort(400, 'Not a JSON')
-    request['id'] = review.id
-    request['user_id'] = review.user_id
-    request['place_id'] = review.place_id
-    request['created_at'] = review.created_at
-    review.__init__(**request)
-    review.save()
+    req = request.get_json()
+    for key in req:
+        if key == 'id' or key == 'user_id' or\
+           key == 'place_id' or key == 'created_at' or key == 'updated_at':
+            pass
+        else:
+            setattr(review, key, req[key])
+    storage.save()
     return jsonify(review.to_dict()), 200
