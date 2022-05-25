@@ -11,7 +11,7 @@ from api.v1.views import app_views
 
 @app_views.route('/places/<place_id>/reviews',
                  methods=['GET'], strict_slashes=False)
-def all_places(place_id=None):
+def all_reviews(place_id=None):
     """method retieves all reviews"""
     place = storage.get(Place, place_id)
     if not place:
